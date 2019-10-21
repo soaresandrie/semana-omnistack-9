@@ -1,10 +1,24 @@
-const express = require('express');
+const express = require("express");
+const mongoose = require("mongoose");
+const routes = require("./routes");
 
 const app = express();
 
-app.get('/', (req, res) => {
-    return res.json({ message: "Hello OmniStack" });
-});
+mongoose.connect(
+  "mongodb+srv://omnistack:omnistack@cluster0-k7m4f.mongodb.net/semana09?retryWrites=true&w=majority",
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  }
+);
+
+//GET. POST, PUT, DELETE
+
+//req.query = Acessar query params (para filtros)
+//req.params = Acessar route params (para adição, delete)
+//req.body = Acessar corpo da requisição (para criação, edição)
+
+app.use(express.json());
+app.use(routes);
 
 app.listen(3333);
-
