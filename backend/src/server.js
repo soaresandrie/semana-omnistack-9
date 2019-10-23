@@ -1,5 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
+
 const routes = require("./routes");
 
 const app = express();
@@ -18,6 +20,8 @@ mongoose.connect(
 //req.params = Acessar route params (para adição, delete)
 //req.body = Acessar corpo da requisição (para criação, edição)
 
+//app.use(cors({ oriigin: "http://localhost:3333"}));
+app.use(cors());
 app.use(express.json());
 app.use(routes);
 
