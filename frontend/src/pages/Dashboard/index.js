@@ -32,6 +32,9 @@ export default function Dashboard() {
           </li>
         ))}
       </ul>
+      <Link to="/new">
+        <button className="btn">Cadastrar novo Spot </button>
+      </Link>
     </>
   )
 }
