@@ -1,11 +1,53 @@
-import React from "react";
-import { View, Image, StyleSheet, Text, TextInput } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  AsyncStorage
+} from "react-native";
+
+import api from "../services/api";
 
 import logo from "../assets/logo.png";
 
-export default function Login() {
+export default function Login({ navigation }) {
+  const [email, setEmail] = useState("");
+  const [techs, setTechs] = useState("");
+
+  useEffect(() => {
+    AsyncStorage.getItem("user").then(user => {
+      if (user) {
+        navigation.navigate("List");
+      }
+    });
+  }, []);
+
+  async function handleSubmit() {
+    //email, techs
+    //console.log(email, techs);
+    const response = await api.post("/sessions", {
+      email
+    });
+
+    const { _id } = response.data;
+    //console.log(_id);
+    await AsyncStorage.setItem("user", _id);
+    await AsyncStorage.setItem("techs", techs);
+
+    navigation.navigate("List");
+  }
+
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      enable={Platform.OS === "ios"}
+      behavior="padding"
+      style={styles.container}
+    >
       <Image source={logo} />
 
       <View style={styles.form}>
@@ -17,6 +59,8 @@ export default function Login() {
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
+          value={email}
+          onChangeText={text => setEmail(text)}
         />
 
         <Text style={styles.label}>TECNOLOGIAS *</Text>
@@ -26,9 +70,15 @@ export default function Login() {
           placeholderTextColor="#999"
           autoCapitalize="words"
           autoCorrect={false}
+          value={techs}
+          onChangeText={setTechs}
         />
+
+        <TouchableOpacity onPress={handleSubmit} style={styles.button}>
+          <Text style={styles.buttonText}>Encontrar spots</Text>
+        </TouchableOpacity>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -60,5 +110,18 @@ const styles = StyleSheet.create({
     height: 44,
     marginBottom: 20,
     borderRadius: 2
+  },
+  button: {
+    height: 42,
+    backgroundColor: "#f05a5b",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 2
+  },
+
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16
   }
 });
